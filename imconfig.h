@@ -24,8 +24,8 @@
 //#define IMGUI_API __declspec( dllexport )
 //#define IMGUI_API __declspec( dllimport )
 
-//---- Don't define obsolete functions/enums/behaviors. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.
-//#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+//---- Don't define obsolete functions/enums names. Consider enabling from time to time after updating to avoid using soon-to-be obsolete function/names.
+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
 //---- Disable all of Dear ImGui or don't implement standard windows.
 // It is very strongly recommended to NOT disable the demo windows during development. Please read comments in imgui_demo.cpp.
@@ -116,3 +116,22 @@ namespace ImGui
     void MyFunction(const char* name, const MyMatrix44& v);
 }
 */
+
+#include "Source/Lang/Contracts.h"
+
+#include "Source/Math/Vector2.h"
+#include "Source/Rendering/Color.h"
+
+#define IM_ASSERT(e) Assert(e)
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "External/ImGuiGL.h"
+
+#define IM_VEC2_CLASS_EXTRA \
+		ImVec2(const CaveGame::Math::Vector2& f) { x = f.X; y = f.Y; } \
+		operator CaveGame::Math::Vector2() const { return CaveGame::Math::Vector2(x,y); }
+
+#define IM_VEC4_CLASS_EXTRA \
+		ImVec4(const CaveGame::Rendering::Color& f) { x = f.R; y = f.G; z = f.B; w = f.A; }     \
+		operator CaveGame::Rendering::Color() const { return CaveGame::Rendering::Color(x,y,z,w); }
+
+#define ImTextureID const void*
+

@@ -78,7 +78,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "imgui.h"
+#include "../imgui.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
 #if defined(_MSC_VER) && _MSC_VER <= 1500 // MSVC 2008 or earlier
@@ -86,6 +86,9 @@
 #else
 #include <stdint.h>     // intptr_t
 #endif
+
+#include "Source/Rendering/Textures/Texture.h"
+#include "Source/OpenGL/Texture.h"
 
 // GL includes
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -413,7 +416,12 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
                     glScissor((int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y));
 
                     // Bind texture, Draw
-                    glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+
+                    if (pcmd->TextureId == (void*)(intptr_t)g_FontTexture)
+                        glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->TextureId);
+                    else
+                        glBindTexture(GL_TEXTURE_2D, ((const CaveGame::Rendering::Textures::Texture*)pcmd->TextureId)->Get()->GetTextureID());
+
 #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_VTX_OFFSET
                     if (g_GlVersion >= 320)
                         glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)), (GLint)pcmd->VtxOffset);
@@ -562,6 +570,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "{\n"
         "    Frag_UV = UV;\n"
         "    Frag_Color = Color;\n"
+        "    Frag_Color.rgb = pow(Frag_Color.rgb, vec3(2.2));\n"
         "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
@@ -576,6 +585,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "{\n"
         "    Frag_UV = UV;\n"
         "    Frag_Color = Color;\n"
+        "    Frag_Color.rgb = pow(Frag_Color.rgb, vec3(2.2));\n"
         "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
@@ -591,6 +601,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "{\n"
         "    Frag_UV = UV;\n"
         "    Frag_Color = Color;\n"
+        "    Frag_Color.rgb = pow(Frag_Color.rgb, vec3(2.2));\n"
         "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
@@ -605,6 +616,7 @@ bool    ImGui_ImplOpenGL3_CreateDeviceObjects()
         "{\n"
         "    Frag_UV = UV;\n"
         "    Frag_Color = Color;\n"
+        "    Frag_Color.rgb = pow(Frag_Color.rgb, vec3(2.2));\n"
         "    gl_Position = ProjMtx * vec4(Position.xy,0,1);\n"
         "}\n";
 
