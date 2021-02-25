@@ -75,7 +75,7 @@ int main(int, char**)
     //ImGui::StyleColorsClassic();
 
     // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForVulkan(window, true);
+    ImGui_ImplGlfw_InitForOther(window, true);
     ImGui_ImplWGPU_Init(wgpu_device, 3, WGPUTextureFormat_RGBA8Unorm);
 
     // Load Fonts
@@ -205,7 +205,7 @@ static void main_loop(void* window)
     WGPURenderPassColorAttachmentDescriptor color_attachments = {};
     color_attachments.loadOp = WGPULoadOp_Clear;
     color_attachments.storeOp = WGPUStoreOp_Store;
-    color_attachments.clearColor = { clear_color.x, clear_color.y, clear_color.z, clear_color.w };
+    color_attachments.clearColor = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
     color_attachments.attachment = wgpuSwapChainGetCurrentTextureView(wgpu_swap_chain);
     WGPURenderPassDescriptor render_pass_desc = {};
     render_pass_desc.colorAttachmentCount = 1;
