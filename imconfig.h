@@ -117,13 +117,12 @@ namespace ImGui
 }
 */
 
-#include "Source/Lang/Contracts.h"
+#include "External/GSL.h"
 
 #include "Source/Math/Vector2.h"
 #include "Source/Rendering/Color.h"
 
-#define IM_ASSERT(e) Assert(e)
-#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM "External/ImGuiGL.h"
+#define IM_ASSERT(e) Expects(e)
 
 #define IM_VEC2_CLASS_EXTRA \
 		ImVec2(const CaveGame::Math::Vector2& f) { x = f.X; y = f.Y; } \
