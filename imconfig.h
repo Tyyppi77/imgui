@@ -117,10 +117,10 @@ namespace ImGui
 }
 */
 
-#include "External/GSL.h"
-
 #include "Source/Math/Vector2.h"
 #include "Source/Rendering/Color.h"
+
+#include <gsl/gsl>
 
 #define IM_ASSERT(e) Expects(e)
 
