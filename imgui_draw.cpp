@@ -3403,6 +3403,36 @@ const char* ImFont::CalcWordWrapPositionA(float scale, const char* text, const c
     return s;
 }
 
+static bool ParseColor(const char* s, ImU32 *col, const ImU32 defaultCol){
+    *col = 0;
+    if(s[0] != '£' || s[1] != '£'){
+        return false;
+    } else {
+        for(int i=0; i<8; ++i){
+            *col *= 16;
+            char c = s[i+2];
+            if(c>='0' && c<='9'){
+                *col += c - '0';
+            } else if(c>='A' && c<='F'){
+                *col += c - 'A' + 10;
+            } else if(c>='a' && c<='f'){
+                *col += c - 'a' + 10;
+            } else if (c == '-') {
+                *col = defaultCol;
+            } else {
+                return false;
+            }
+        }
+        ImU32 flip_col = 0;
+        for(int i=0; i<4; ++i){
+            flip_col <<= 8;
+            flip_col += (*col >> 8*i) & 0x000000FF;
+        }
+        *col = flip_col;
+        return true;
+    }
+}
+
 ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, const char* text_begin, const char* text_end, const char** remaining) const
 {
     if (!text_end)
@@ -3420,6 +3450,12 @@ ImVec2 ImFont::CalcTextSizeA(float size, float max_width, float wrap_width, cons
     const char* s = text_begin;
     while (s < text_end)
     {
+        ImU32 dummy{ };
+        if (s < text_end - 10 && ParseColor(s, &dummy, dummy)) {
+            s += 10;
+            continue;
+        }
+
         if (word_wrap_enabled)
         {
             // Calculate how far we can render. Requires two passes on the string data but keeps the code simple and not intrusive for what's essentially an uncommon feature.
@@ -3517,6 +3553,31 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
 {
     if (!text_end)
         text_end = text_begin + strlen(text_begin); // ImGui:: functions generally already provides a valid text_end, so this is merely to handle direct calls.
+
+    static constexpr int kMaxChar = 262144;
+    static char multicolorChars[kMaxChar]{ };
+    static ImU32 multicolorColors[kMaxChar]{ };
+
+    {
+        const ImU32 defaultCol = col;
+
+        int index = 0;
+        const char* s = text_begin;
+        ImU32 temp_col;
+        while (s < text_end){
+            if(s < text_end - 10 && ParseColor(s, &temp_col, defaultCol)){
+                col = temp_col;
+                s += 10;
+            } else {
+                multicolorChars[index] = *s;
+                multicolorColors[index] = col;
+                ++index;
+                ++s;
+            }
+        }
+        text_begin = &multicolorChars[0];
+        text_end = &multicolorChars[index];
+    }
 
     // Align to be pixel perfect
     pos.x = IM_FLOOR(pos.x);
@@ -3676,7 +3737,8 @@ void ImFont::RenderText(ImDrawList* draw_list, float size, ImVec2 pos, ImU32 col
                 }
 
                 // Support for untinted glyphs
-                ImU32 glyph_col = glyph->Colored ? col_untinted : col;
+                ImU32 temp_col = multicolorColors[s - text_begin - 1];
+                ImU32 glyph_col = glyph->Colored ? col_untinted : temp_col;
 
                 // We are NOT calling PrimRectUV() here because non-inlined causes too much overhead in a debug builds. Inlined here:
                 {
