@@ -418,7 +418,8 @@ void ImGui::StyleColorsDarkGrey(ImGuiStyle* dst)
     colors[ImGuiCol_TabActive] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
     colors[ImGuiCol_TabUnfocused] = ImVec4(0.00f, 0.00f, 0.00f, 0.42f);
     colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
-    colors[ImGuiCol_EditorIconNeutral] = ImVec4(0.15f, 0.73f, 1.00f, 1.00f);
+    colors[ImGuiCol_EditorIconNeutral] = ImVec4(1.00f, 0.72f, 0.11f, 1.00f);
+    colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.01f);
 }
 
 void ImGui::StyleColorsDarkBlue(ImGuiStyle* dst)
