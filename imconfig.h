@@ -125,10 +125,10 @@ namespace ImGui
 #define IMGUI_DISABLE_STB_TRUETYPE_IMPLEMENTATION
 #define IMGUI_DISABLE_STB_RECT_PACK_IMPLEMENTATION
 
-#include "Source/Math/Vector2.h"
-#include "Source/Rendering/Color.h"
+#include "Source/Math/Vector2.hpp"
+#include "Source/Rendering/Color.hpp"
 
-#include "External/Assert.h"
+#include "External/Assert.hpp"
 
 #define IM_ASSERT(e) CG_EXTERNAL_ASSERT_WORKAROUND(e)
 
